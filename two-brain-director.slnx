@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/dev/">
+    <Project Path="dev/SboxTwoBrains.Tests/SboxTwoBrains.Tests.csproj" />
+  </Folder>
+</Solution>

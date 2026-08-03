@@ -1,0 +1,22 @@
+# dotnet
+bin/
+obj/
+.vs/
+*.user
+
+# s&box editor-generated (written through the project at compile time)
+Code/*.csproj
+Code/Properties/
+Editor/*.editor.csproj
+Editor/Properties/
+
+# s&box runtime artifacts
+*.log
+.sbox/
+
+# research reference clone (not redistributed)
+reference/
+
+# editor-rig results / scratch
+dev/editor-rig/*_result.json
+dev/editor-rig/*.arm
