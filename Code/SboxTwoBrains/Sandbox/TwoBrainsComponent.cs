@@ -110,7 +110,7 @@ public sealed class TwoBrainsComponent : Component
 				lastCodes = string.Join( ",", codes );
 			}
 			return string.Format(
-				System.Globalization.CultureInfo.InvariantCulture,
+				global::System.Globalization.CultureInfo.InvariantCulture,
 				"mode={0} p={1:0.00} cand={2} count={3} quota={4}/{5} module={6} motiv={7} target={8} navfail={9} awaiting={10} pending={11} sweep={12:0.0} codes={13}",
 				m.Mode, m.Progression, m.ActiveCandidateId, m.CompletedOpportunities,
 				m.EventQuotaProgress, m.EventQuotaTarget,
