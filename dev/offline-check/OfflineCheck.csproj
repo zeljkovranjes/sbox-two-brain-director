@@ -1,0 +1,62 @@
+<!--
+  Offline compile check for the library's Code/ and Editor/ sources.
+
+  The s&box editor compiles Code/SboxTwoBrains and Editor/ in-process on project load;
+  iterating through real editor launches is slow, so this csproj mirrors the
+  editor-generated csproj (references, LangVersion, global usings) closely enough to
+  catch compile errors from the command line:
+
+      dotnet build dev\offline-check\OfflineCheck.csproj
+
+  It compiles the library sources into a plain assembly instead of project-referencing
+  the generated package csproj (which only exists after an editor run).
+  "Base Editor Library.dll" / "Base Library.dll" are the editor-built copies of
+  addons/tools and addons/base from <sbox>/.vs/output. Not a substitute for the real
+  in-engine compile - dev/editor-rig/run_editor_gate.ps1 remains the authoritative gate.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <DefineConstants>SANDBOX</DefineConstants>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>SboxTwoBrains.OfflineCheck</AssemblyName>
+    <RootNamespace>Sandbox</RootNamespace>
+    <NoWarn>1701;1702;1591;8632</NoWarn>
+    <SboxRoot Condition="'$(SboxRoot)' == ''">D:\SteamLibrary\steamapps\common\sbox</SboxRoot>
+    <OutputPath>obj\out\</OutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Sandbox.Internal.GlobalToolsNamespace" Static="true" />
+    <Using Include="Sandbox.Internal.GlobalGameNamespace" Static="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Code\**\*.cs" Exclude="..\..\Code\obj*\**" />
+    <Compile Include="..\..\Editor\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.System.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Engine.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Filesystem.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Reflection.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Mounting.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.AppSystem.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Tools.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Compiling.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Bind.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Sandbox.Event.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Facepunch.ActionGraphs.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\SkiaSharp.dll" />
+    <Reference Include="$(SboxRoot)\bin\managed\Microsoft.AspNetCore.Components.dll" />
+    <Reference Include="$(SboxRoot)\.vs\output\Base Editor Library.dll" />
+    <Reference Include="$(SboxRoot)\.vs\output\Base Library.dll" />
+  </ItemGroup>
+
+</Project>

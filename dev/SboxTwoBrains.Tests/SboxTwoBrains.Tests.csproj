@@ -7,6 +7,8 @@
     <LangVersion>14</LangVersion>
     <IsPackable>false</IsPackable>
     <RootNamespace>SboxTwoBrains.Tests</RootNamespace>
+    <!-- Isolated per-lane intermediate dirs (obj.*) used by parallel agents must never be compiled. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj*/**;bin*/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <!-- Shared-source: compile the core library directly (single source of truth). -->

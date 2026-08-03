@@ -1,0 +1,16 @@
+{
+  "Title": "Two-Brain Director",
+  "Type": "library",
+  "Org": "notpointless",
+  "Ident": "two_brain_director",
+  "Schema": 1,
+  "IncludeSourceFiles": true,
+  "Compiler": {
+    "NoWarn": "1701;1702;1591;8632"
+  },
+  "Metadata": {
+    "Summary": "Deterministic two-layer monster AI: macro pressure director plus micro autonomous agent for s&box.",
+    "Description": "A generalized two-brain monster AI library for pursuers, stalkers, predators, nemeses, bosses, and hostile agents. Deterministic cores consume plain snapshots and emit declarative pressure decisions and action requests; hosts remain responsible for entities, navigation, animation, combat, and replication. Optional Alien: Isolation-inspired compatibility preset; no game code or assets.",
+    "WebsiteUrl": "https://github.com/zeljkovranjes/sbox-two-brain-director"
+  }
+}
