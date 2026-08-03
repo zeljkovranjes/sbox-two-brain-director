@@ -19,7 +19,7 @@ confidence label, and consuming component — is
 
 Enforcement rules, everywhere: proven facts may shape the preset; inferred behavior
 stays configurable; game-specific names (menace, backstage, vent, AlienConfig
-template names) appear only under `TwoBrains.Core.Compat` and in preset
+template names) appear only under the compat classes (`SboxTwoBrains`) and in preset
 documentation.
 
 ## What is proven decoded data

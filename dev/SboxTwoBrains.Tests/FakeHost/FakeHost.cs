@@ -39,9 +39,20 @@ public sealed class FakeHost
 	/// <summary>How the host resolves one action request.</summary>
 	public delegate ActionStatus AckPolicy( ActionRequest request, FakeHost host );
 
+	/// <summary>
+	/// How the host resolves one macro opportunity offer. <paramref name="postponements"/>
+	/// counts how many times this opportunity was already answered with
+	/// <see cref="ActionStatus.Deferred"/> (lets policies express "defer once, then succeed").
+	/// </summary>
+	public delegate ActionStatus OpportunityAckPolicy( PressureDecision opportunity, FakeHost host, int postponements );
+
 	private readonly List<ActionResult> _pendingAcks = new List<ActionResult>();
 	private readonly List<ActiveExecution> _executions = new List<ActiveExecution>();
 	private readonly List<Stimulus> _stimuli = new List<Stimulus>();
+	private readonly List<ActionResult> _queuedOpportunityAcks = new List<ActionResult>();
+	private string _trackedOpportunityId = "";
+	private PressureDecision _trackedOpportunity;
+	private int _opportunityPostponements;
 
 	private sealed class ActiveExecution
 	{
@@ -79,6 +90,14 @@ public sealed class FakeHost
 
 	/// <summary>Per-kind ack policy overrides; default is <see cref="DefaultPolicy"/>.</summary>
 	public Dictionary<ActionKind, AckPolicy> Policies { get; } = new Dictionary<ActionKind, AckPolicy>();
+
+	/// <summary>
+	/// Macro-opportunity ack policy; null (the default) means the host never acknowledges
+	/// opportunities, so they run to sweep end or expiry — the historical FakeHost behavior.
+	/// When set, the policy is evaluated once per tick while the offer is pending and its
+	/// answer is delivered inside the NEXT tick's snapshot, exactly like action acks.
+	/// </summary>
+	public OpportunityAckPolicy OpportunityPolicy { get; set; }
 
 	/// <summary>Every batch the system produced, in order.</summary>
 	public List<DecisionBatch> History { get; } = new List<DecisionBatch>();

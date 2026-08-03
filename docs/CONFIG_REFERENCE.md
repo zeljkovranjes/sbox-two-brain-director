@@ -204,7 +204,7 @@ profile, so a modifier cannot push a field out of range without an error.
 
 ## The AlienIsolationInspired preset
 
-`TwoBrains.Core.Compat.AlienIsolationPresets` ships the decoded intensity
+`SboxTwoBrains.AlienIsolationPresets` ships the decoded intensity
 configurations as verbatim `AlienIsolationConfigRecord`s plus
 `CreateCatalogue()`, which registers one profile per record and the headliner
 profile `ALIENISOLATIONINSPIRED` (based on `DEFAULT`, `ConfigVersion`

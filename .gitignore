@@ -25,3 +25,7 @@ CLAUDE.md
 # editor-rig results / scratch
 dev/editor-rig/*_result.json
 dev/editor-rig/*.arm
+
+# per-lane agent build dirs
+obj.*/
+bin.*/

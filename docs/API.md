@@ -1,8 +1,9 @@
 # Public API map
 
-Namespace root is `TwoBrains.Core`. Contract types live in `TwoBrains.Core.Contract`,
-configuration in `TwoBrains.Core.Config`, determinism in `TwoBrains.Core.Determinism`,
-and the compatibility preset in `TwoBrains.Core.Compat`.
+All core types live in the single flat namespace `SboxTwoBrains` (`Code/SboxTwoBrains/`):
+contract types, configuration, determinism, macro, micro, serialization, and the
+compatibility preset side by side. The engine adapter lives in `SboxTwoBrains.Sandbox`
+(`Code/SboxTwoBrains/Sandbox/`).
 
 | Need | Type |
 |---|---|
@@ -407,7 +408,7 @@ inputs must produce byte-identical decisions.
 
 ## PressureDirector (advanced use without the facade)
 
-`TwoBrains.Core.Macro.PressureDirector` — the macro layer standalone. Hosts driving
+`SboxTwoBrains.PressureDirector` — the macro layer standalone. Hosts driving
 it directly must reproduce the facade's call order: `ApplyOpportunityResults`, then
 `ApplyDirectives`, then `Tick`, once per tick, with timer aging inside `Tick`.
 
@@ -450,7 +451,7 @@ non-negative.
 
 ## MonsterAgent (advanced use without the facade)
 
-`TwoBrains.Core.Micro.MonsterAgent` — the micro layer standalone. Call order per
+`SboxTwoBrains.MonsterAgent` — the micro layer standalone. Call order per
 tick: `ApplyActionResults`, then `ApplyDirectives`, then `Tick`.
 
 | Member | Signature | Meaning |
@@ -514,7 +515,7 @@ handling).
 
 ## DeterministicRng
 
-`TwoBrains.Core.Determinism.DeterministicRng` — seedable, fully serializable
+`SboxTwoBrains.DeterministicRng` — seedable, fully serializable
 xorshift128+ RNG. Two 64-bit words are the complete state. Never use `System.Random`
 in policy-adjacent code.
 
@@ -545,7 +546,7 @@ this is the API surface only.
 
 ## Compat: the research preset
 
-`TwoBrains.Core.Compat` is the only namespace where game-specific names and recovered
+the compat classes (`SboxTwoBrains`) is the only namespace where game-specific names and recovered
 constants appear. See [CONFIG_REFERENCE.md](CONFIG_REFERENCE.md#the-alienisolationinspired-preset)
 for values and [EVIDENCE.md](EVIDENCE.md) for confidence labels.
 
