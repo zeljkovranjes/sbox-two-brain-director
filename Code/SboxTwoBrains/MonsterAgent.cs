@@ -175,17 +175,15 @@ public sealed class MonsterAgent
 
 	private void IngressSucceeded( TickContext ctx, PendingActionMeta meta, List<TelemetryEvent> telemetry )
 	{
-		// every ingress traversal crosses the stage boundary
+		// Clear offstage context on a successful traversal; the tick-start presence
+		// reconciliation re-adds the flag when the monster is actually offstage, so this
+		// never contradicts real presence (a monster may start offstage with the flag unset).
 		if ( _state.Flags.Contains( StateKeys.Offstage ) )
 		{
 			_state.Flags.Remove( StateKeys.Offstage );
 			_state.Flags.Remove( StateKeys.SweepActive );
 			_state.Flags.Remove( StateKeys.SweepDwellFlag );
 			telemetry.Add( new TelemetryEvent( ctx.TickIndex, "micro", ReasonCodes.SweepEnd, "ingress=" + meta.IngressId ) );
-		}
-		else
-		{
-			_state.Flags.Add( StateKeys.Offstage );
 		}
 	}
 
@@ -232,6 +230,22 @@ public sealed class MonsterAgent
 		if ( _state.LastMacro != null && _state.LastMacro.ExpiryTick <= ctx.TickIndex ) _state.LastMacro = null;
 
 		var ac = new AgentContext( ctx, world, _state.LastMacro, cfg, _state, _rng, telemetry );
+
+		// Reconcile the offstage flag with actual presence BEFORE anything else reads it.
+		// The flag exists as a fallback for hosts that cannot report presence; it must never
+		// contradict the host's fact (a monster may start offstage with the flag unset).
+		if ( world.Monster.Presence == StagePresence.Offstage )
+		{
+			_state.Flags.Add( StateKeys.Offstage );
+		}
+		else if ( world.Monster.Presence == StagePresence.Frontstage && _state.Flags.Contains( StateKeys.Offstage ) )
+		{
+			_state.Flags.Remove( StateKeys.Offstage );
+			bool hadSweep = _state.Flags.Remove( StateKeys.SweepActive );
+			_state.Flags.Remove( StateKeys.SweepDwellFlag );
+			if ( hadSweep )
+				telemetry.Add( new TelemetryEvent( ctx.TickIndex, "micro", ReasonCodes.SweepEnd, "frontstage presence" ) );
+		}
 
 		// 1. age timers, maintain gauges/exposure, update perception memory + target evidence
 		AgeTimers( ac );
