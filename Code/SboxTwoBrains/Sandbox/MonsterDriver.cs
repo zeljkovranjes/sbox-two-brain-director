@@ -72,12 +72,14 @@ public class MonsterDriverBase : Component, IMonsterDriver
 	[Property] public float ArriveDistance { get; set; } = 24.0f;
 
 	/// <summary>Hard time limit for one move; expiry reports failure to the core.</summary>
-	[Property] public float MoveTimeoutSeconds { get; set; } = 30.0f;
+	[Property] public float MoveTimeoutSeconds { get; set; } = 15.0f;
 
 	private NavMeshAgent _agent;
 	private TaskCompletionSource<bool> _pendingMove;
 	private Vector3 _moveDestination;
 	private float _moveDeadline;
+	private Vector3 _moveProgressPos;
+	private float _moveProgressAt;
 	private float _moveNavGraceUntil;
 
 	/// <inheritdoc/>
@@ -106,6 +108,8 @@ public class MonsterDriverBase : Component, IMonsterDriver
 		_moveDestination = dest;
 		_moveDeadline = Time.Now + Math.Max( 1.0f, MoveTimeoutSeconds );
 		_moveNavGraceUntil = Time.Now + 0.25f;
+		_moveProgressPos = WorldPosition;
+		_moveProgressAt = Time.Now;
 
 		if ( _agent is not null && _agent.IsValid && _agent.Enabled )
 		{
@@ -232,6 +236,18 @@ public class MonsterDriverBase : Component, IMonsterDriver
 			// the whole timeout.
 			if ( Time.Now >= _moveNavGraceUntil && !_agent.IsNavigating )
 				CompletePendingMove( false );
+			else if ( Time.Now - _moveProgressAt > 2.5f )
+			{
+				// Wedge detection: navigating but no meaningful progress (e.g. pressed against
+				// a sealed boundary the mesh cannot cross). Fail fast so the core can recover.
+				if ( WorldPosition.Distance( _moveProgressPos ) < 2.0f )
+					CompletePendingMove( false );
+				else
+				{
+					_moveProgressPos = WorldPosition;
+					_moveProgressAt = Time.Now;
+				}
+			}
 			return;
 		}
 

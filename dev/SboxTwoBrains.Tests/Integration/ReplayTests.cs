@@ -15,9 +15,11 @@ namespace SboxTwoBrains.Tests.Integration;
 ///
 /// Scenario shape (all real core behaviour): a forced opportunity at tick 0 with no memory
 /// yet routes the sweeper role through the vent (Ambush needs memory evidence and a
-/// frontstage presence, so it stays ineligible); the sweep is interrupted by an investigate
-/// and a threat-gated chase because those modules outrank Offstage; the ambusher role never
-/// engages because the monster is offstage for the rest of the run.
+/// frontstage presence, so it stays ineligible); the sweep is interrupted by an OFF1
+/// (stage-compatible) investigate and a threat-gated chase because those modules outrank
+/// Offstage; the ambusher role never engages because the monster is offstage for the rest
+/// of the run. Frontstage stimuli while offstage are stage-gated: the monster must egress
+/// before investigating them.
 /// </summary>
 public sealed class ReplayTests
 {
@@ -26,7 +28,7 @@ public sealed class ReplayTests
 
 	private static readonly Vec3 T1Pos = new Vec3( 15.0, 0.0, 0.0 );
 	private static readonly Vec3 T2Pos = new Vec3( -2.0, 0.0, 12.0 );
-	private static readonly Vec3 NoisePos = new Vec3( 4.0, 0.0, 0.0 );
+	private static readonly Vec3 NoisePos = new Vec3( 2.0, 30.0, 0.0 ); // inside OFF1 (backstage noise)
 
 	/// <summary>Builds the replay world: two targets, atrium search nodes, one vent into OFF1.</summary>
 	private static Host NewReplayHost()
@@ -65,7 +67,7 @@ public sealed class ReplayTests
 		if ( t == 0 )
 			IntegrationSupport.Direct( host, IntegrationSupport.ForceOpportunity( "hall" ) );
 		if ( t == 60 || t == 61 )
-			host.EmitNoise( "noise-60", NoisePos, "atrium", 0.8 );
+			host.EmitNoise( "noise-60", NoisePos, "OFF1", 0.8 );
 		if ( t == 100 )
 			IntegrationSupport.Direct( host, new ScriptDirective { Kind = ScriptDirectiveKind.SetPressureMode, Mode = PressureMode.Aggressive, Progression = 0.5, ResetGauge = true } );
 		if ( t == 130 )

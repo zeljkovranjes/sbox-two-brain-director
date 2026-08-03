@@ -20,6 +20,7 @@ internal sealed class InvestigateModule : IAgentModule
 		{
 			var best = ac.BestUnattributed();
 			if ( best == null ) return ModuleResult.Ineligible();
+			if ( !ac.StageCompatible( best.RegionId ) ) return ModuleResult.Ineligible(); // egress first (offstage rule)
 			if ( !ac.MayEmit ) return ModuleResult.Running();
 			s.InvestigationStimulusId = best.StimulusId;
 			s.InvestigationStage = 1;

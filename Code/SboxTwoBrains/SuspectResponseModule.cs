@@ -30,6 +30,7 @@ internal sealed class SuspectResponseModule : IAgentModule
 				remembered = m;
 		}
 		if ( remembered == null ) return ModuleResult.Ineligible();
+		if ( !ac.StageCompatible( remembered.RegionId ) ) return ModuleResult.Ineligible(); // egress first (offstage rule)
 		if ( !ac.MayEmit ) return ModuleResult.Running();
 
 		s.Flags.Add( StateKeys.SuspectResponded );

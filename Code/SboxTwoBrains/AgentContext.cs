@@ -92,6 +92,25 @@ internal sealed class AgentContext
 		return false;
 	}
 
+	/// <summary>
+	/// True when a destination region is compatible with the monster's current stage.
+	/// An offstage monster may not path into frontstage space — there is no navmesh route
+	/// through sealed offstage boundaries, so such moves wedge the agent. Those modules
+	/// must yield (Ineligible) and let the Offstage module egress via an ingress first.
+	/// Unknown/empty regions are allowed (planar fallback remains possible).
+	/// </summary>
+	public bool StageCompatible( string regionId )
+	{
+		if ( Monster.Presence != StagePresence.Offstage )
+			return true;
+		if ( string.IsNullOrEmpty( regionId ) )
+			return true;
+		foreach ( var region in World.OffstageRegions )
+			if ( region.RegionId == regionId )
+				return true;
+		return false;
+	}
+
 	// ---- perception channel helpers ----
 
 	public EffectiveConfig.ResolvedPerceptionChannel ChannelCfg( SenseChannel channel )

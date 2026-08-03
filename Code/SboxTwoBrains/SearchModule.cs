@@ -36,6 +36,12 @@ internal sealed class SearchModule : IAgentModule
 		if ( string.IsNullOrEmpty( region ) )
 			region = s.LastSearchRegionId.Length > 0 ? s.LastSearchRegionId : ac.Monster.RegionId;
 
+		if ( !ac.StageCompatible( region ) )
+		{
+			if ( active ) return EndEpisode( ac, "stage_change" );
+			return ModuleResult.Ineligible(); // egress first (offstage rule)
+		}
+
 		NavCandidate pick = null;
 		foreach ( var n in ac.SortedReachableNodes( region, NavCandidateKind.FrontstageNode ) )
 		{
