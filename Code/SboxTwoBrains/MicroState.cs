@@ -70,6 +70,13 @@ public sealed class MicroState
 	/// <summary>Scripted sequence name in progress; empty when none.</summary>
 	public string ActiveScriptedSequence { get; set; } = "";
 
+	/// <summary>
+	/// Opportunity id that brought the monster offstage. The offstage entry branch refuses
+	/// to re-enter on the SAME (still-latched) opportunity after an egress, preventing the
+	/// egress → re-entry ping-pong that would keep the monster permanently offstage.
+	/// </summary>
+	public string OffstageBlockOpportunityId { get; set; } = "";
+
 	/// <summary>Module-local scratch flags (sorted; names must be module-prefixed).</summary>
 	public SortedSet<string> Flags { get; set; } = new SortedSet<string>( System.StringComparer.Ordinal );
 

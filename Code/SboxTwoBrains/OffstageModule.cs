@@ -28,6 +28,11 @@ internal sealed class OffstageModule : IAgentModule
 			if ( ac.Monster.Presence != StagePresence.Frontstage ) return ModuleResult.Ineligible();
 			if ( !ac.Monster.CanTraverseIngress ) return ModuleResult.Ineligible();
 			if ( string.IsNullOrEmpty( macro.CandidateRegionId ) ) return ModuleResult.Ineligible();
+			// Never re-enter on the opportunity that already brought us offstage (still
+			// latched): the monster must spend its frontstage phase hunting until a NEW
+			// opportunity arrives.
+			if ( macro.OpportunityId.Length > 0 && macro.OpportunityId == s.OffstageBlockOpportunityId )
+				return ModuleResult.Ineligible();
 			bool adjacent = false;
 			foreach ( var r in ac.World.OffstageRegions )
 			{
@@ -51,6 +56,10 @@ internal sealed class OffstageModule : IAgentModule
 			if ( pick == null ) return ModuleResult.Ineligible();
 			if ( !ac.MayEmit ) return ModuleResult.Running();
 
+			// Remember the opportunity bringing us offstage; the entry gate uses it after
+			// the egress to prevent an immediate ping-pong on the same latched decision.
+			if ( macro.OpportunityId.Length > 0 )
+				s.OffstageBlockOpportunityId = macro.OpportunityId;
 			var draft = ac.Draft( ActionKind.UseIngress, ReasonCodes.IngressUse );
 			draft.IngressId = pick.IngressId;
 			draft.Destination = pick.Position;
@@ -66,10 +75,13 @@ internal sealed class OffstageModule : IAgentModule
 		}
 		if ( !ac.TimerActive( StateKeys.Sweep ) )
 		{
-			// sweep window expired: exit via the nearest usable ingress
+			// sweep window expired: exit via the nearest usable ingress; if the entry never
+			// recorded an opportunity (e.g. monster started offstage), remember it here
 			var exit = ac.NearestUsableIngress();
 			if ( exit == null ) return ModuleResult.Ineligible();
 			if ( !ac.MayEmit ) return ModuleResult.Running();
+			if ( s.OffstageBlockOpportunityId.Length == 0 )
+				s.OffstageBlockOpportunityId = macro?.OpportunityId ?? "";
 			var draft = ac.Draft( ActionKind.UseIngress, ReasonCodes.IngressUse );
 			draft.IngressId = exit.IngressId;
 			draft.Destination = exit.Position;

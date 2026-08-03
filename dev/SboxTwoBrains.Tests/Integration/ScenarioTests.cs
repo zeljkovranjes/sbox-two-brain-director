@@ -412,6 +412,78 @@ public sealed class ScenarioTests
 		Assert.Equal( StagePresence.Frontstage, host.MonsterPresence );
 	}
 
+	// 7b — regression: after an egress the offstage entry branch must not fire again on the
+	// SAME (still-latched) opportunity — that ping-pong kept monsters permanently offstage.
+	[Fact]
+	public void NoEgressReentryPingPong()
+	{
+		var catalogue = AlienIsolationPresets.CreateCatalogue();
+		catalogue.Add( new MonsterProfileConfig
+		{
+			Name = "pingpong",
+			BasedOn = "DEFAULT",
+			Pressure = new PressureSection
+			{
+				SweepDurationSeconds = 6.0,
+				CooldownSeconds = 2.0,
+				OpportunityExpirySeconds = 30.0,
+				SweepIdleMinSeconds = 0.5,
+				SweepIdleMaxSeconds = 1.0,
+			},
+		} );
+		var host = new SboxTwoBrains.Tests.FakeHost.FakeHost( new TwoBrainsSystem( catalogue, "pingpong", 42 ) ) { DeltaTime = 1.0 / 20.0 };
+		host.MonsterPosition = Vec3.Zero;
+		host.MonsterRegionId = "hall";
+		host.AddTarget( "t1", new Vec3( 30.0, 0.0, 0.0 ), "hall" );
+		host.AddIngress( "vent1", 2.0, 0.0, 0.0, "hall", "on1" );
+		host.OffstageRegions.Add( new OffstageRegion
+		{
+			RegionId = "OFF1",
+			NodeIds = { "on1", "on2" },
+			IngressIds = { "vent1" },
+			AdjacentRegionIds = { "hall" },
+		} );
+		IntegrationSupport.AddPlanarNode( host, "on1", 0.0, 3.0, "OFF1", kind: NavCandidateKind.OffstageNode );
+		IntegrationSupport.AddPlanarNode( host, "on2", 5.0, 3.0, "OFF1", kind: NavCandidateKind.OffstageNode );
+
+		IntegrationSupport.Direct( host, IntegrationSupport.ForceOpportunity( "hall" ) );
+		var first = host.Step();
+		Assert.Equal( ActionKind.UseIngress, Assert.Single( first.Actions ).Kind );
+		host.Step();
+		Assert.Equal( StagePresence.Offstage, host.MonsterPresence );
+
+		// Sweep 6s (120 ticks) then egress. Find the exit ingress_use.
+		var sweep = host.Run( 160 );
+		var egress = new List<DecisionBatch>();
+		foreach ( var b in sweep )
+		{
+			bool hasIngress = false;
+			foreach ( var a in b.Actions )
+				if ( a.Kind == ActionKind.UseIngress ) hasIngress = true;
+			if ( hasIngress )
+				egress.Add( b );
+		}
+		Assert.NotEmpty( egress );
+		host.Step(); // exit ack flips presence
+		Assert.Equal( StagePresence.Frontstage, host.MonsterPresence );
+		Assert.NotEqual( "", host.System.MicroState.OffstageBlockOpportunityId );
+
+		// After the egress the monster must spend a real hunt phase frontstage: re-entry may
+		// only come from a NEW opportunity (different id), never from the same latched one.
+		// Before the fix the entry branch re-fired within 1-2 ticks of the egress.
+		long egressAckTick = host.TickIndex;
+		ActionRequest reentry = null;
+		while ( reentry == null && host.TickIndex - egressAckTick < 500 )
+		{
+			foreach ( var a in host.Step().Actions )
+				if ( a.Kind == ActionKind.UseIngress )
+					reentry = a;
+		}
+		Assert.NotNull( reentry );
+		long gapTicks = host.TickIndex - egressAckTick;
+		Assert.True( gapTicks > 30, "re-entry after only " + gapTicks + " ticks (ping-pong regression)" );
+	}
+
 	// 8 — dangerous aiming target in close range: threat display/hesitation, never a blind attack.
 	[Fact]
 	public void ThreatAwareHesitation()
