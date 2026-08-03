@@ -208,9 +208,12 @@ public sealed class FakeHost
 
 	private WorldSnapshot BuildSnapshot()
 	{
-		// advance active executions; produce acks for this tick
+		// advance active executions; produce acks for this tick.
+		// Iterate over a copy: Complete() nulls slots in _executions, which would otherwise
+		// invalidate the enumerator (List indexer writes bump the collection version).
 		_pendingAcks.Clear();
-		foreach ( var exec in _executions )
+		var running = new List<ActiveExecution>( _executions );
+		foreach ( var exec in running )
 			AdvanceExecution( exec );
 		_executions.RemoveAll( e => e == null );
 
