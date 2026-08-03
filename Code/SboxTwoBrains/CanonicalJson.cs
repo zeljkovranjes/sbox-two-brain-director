@@ -21,7 +21,6 @@ public static class CanonicalJson
 			DefaultIgnoreCondition = JsonIgnoreCondition.Never,
 			NumberHandling = JsonNumberHandling.Strict,
 			PropertyNamingPolicy = null,
-			Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
 		};
 		options.Converters.Add( new JsonStringEnumConverter() );
 		return options;
