@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Sandbox;
 using SboxTwoBrains;
 
-namespace SboxTwoBrains.Sandbox;
+namespace SboxTwoBrains.Host;
 
 /// <summary>
 /// A navigation node the two-brain core may path through. Drop these around the level;

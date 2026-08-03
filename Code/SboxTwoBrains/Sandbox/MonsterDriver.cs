@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Sandbox;
 
-namespace SboxTwoBrains.Sandbox;
+namespace SboxTwoBrains.Host;
 
 /// <summary>
 /// Abstraction between the deterministic two-brain core and YOUR monster. The core emits

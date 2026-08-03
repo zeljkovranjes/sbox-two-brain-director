@@ -5,7 +5,7 @@ using Sandbox.UI;
 using Sandbox.UI.Construct;
 using SboxTwoBrains;
 
-namespace SboxTwoBrains.Sandbox;
+namespace SboxTwoBrains.Host;
 
 /// <summary>
 /// Compact top-left live telemetry overlay for the two-brain director, mirroring the

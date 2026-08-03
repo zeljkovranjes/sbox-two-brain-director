@@ -1,7 +1,7 @@
 using System.Linq;
 using Sandbox;
 
-namespace SboxTwoBrains.Sandbox;
+namespace SboxTwoBrains.Host;
 
 /// <summary>
 /// Self-contained attach story for the debug overlay: drop this one component on any

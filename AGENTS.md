@@ -17,7 +17,7 @@ Deterministic, engine-independent two-layer monster AI for s&box. Read `docs/PLA
 6. Game-specific names (menace/backstage/vent/AlienConfig templates) appear ONLY under
    `TwoBrains.Core.Compat` and preset docs.
 7. Every state transition emits a reason code into telemetry.
-8. Namespace `SboxTwoBrains` for all core files (flat folder); `SboxTwoBrains.Sandbox` for engine files; file-scoped namespaces; one public type per file.
+8. Namespace `SboxTwoBrains` for all core files (flat folder); `SboxTwoBrains.Host` for engine files; file-scoped namespaces; one public type per file.
 
 ## Workflow
 

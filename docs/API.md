@@ -2,7 +2,7 @@
 
 All core types live in the single flat namespace `SboxTwoBrains` (`Code/SboxTwoBrains/`):
 contract types, configuration, determinism, macro, micro, serialization, and the
-compatibility preset side by side. The engine adapter lives in `SboxTwoBrains.Sandbox`
+compatibility preset side by side. The engine adapter lives in `SboxTwoBrains.Host`
 (`Code/SboxTwoBrains/Sandbox/`).
 
 | Need | Type |

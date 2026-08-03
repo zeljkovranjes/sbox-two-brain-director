@@ -19,7 +19,7 @@ two-brain-director/
     SboxTwoBrains/                 THE LIBRARY — flat, one namespace `SboxTwoBrains`
                                    (contract, config, determinism, macro, micro,
                                    serialization, compat preset — pure, zero engine refs)
-      Sandbox/                     engine adapter namespace SboxTwoBrains.Sandbox:
+      Sandbox/                     engine adapter namespace SboxTwoBrains.Host:
                                    components, snapshot builder, driver, debug overlay HUD
   Editor/CompileGate.cs            editor compile-gate hook (adapted from humanoid-retargeter M0Gate)
   examples/                        runnable example suite (console exe, shared-source core)

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Sandbox;
 using SboxTwoBrains;
 
-namespace SboxTwoBrains.Sandbox;
+namespace SboxTwoBrains.Host;
 
 /// <summary>
 /// Unit conversion between s&amp;box world units and the core's metres. s&amp;box uses

@@ -155,8 +155,47 @@ public sealed class FakeHost
 			_executions.Add( new ActiveExecution { Request = request, Policy = policy } );
 		}
 
+		TrackOpportunity( batch );
+
 		TickIndex++;
 		return batch;
+	}
+
+	/// <summary>
+	/// Evaluates <see cref="OpportunityPolicy"/> for the pending macro opportunity (if any)
+	/// and queues the result for the next snapshot. A terminal answer stops tracking; a
+	/// Deferred answer keeps the opportunity tracked so the policy is asked again next tick.
+	/// </summary>
+	private void TrackOpportunity( DecisionBatch batch )
+	{
+		if ( OpportunityPolicy == null )
+			return;
+		if ( batch.Macro != null && batch.Macro.OpportunityId.Length > 0 && batch.Macro.OpportunityId != _trackedOpportunityId )
+		{
+			_trackedOpportunityId = batch.Macro.OpportunityId;
+			_trackedOpportunity = batch.Macro;
+			_opportunityPostponements = 0;
+		}
+		if ( _trackedOpportunity == null )
+			return;
+		if ( System.MacroState.PendingOpportunityId != _trackedOpportunityId )
+		{
+			// completed, expired or rejected meanwhile — nothing left to answer
+			_trackedOpportunityId = "";
+			_trackedOpportunity = null;
+			return;
+		}
+		var status = OpportunityPolicy( _trackedOpportunity, this, _opportunityPostponements );
+		_queuedOpportunityAcks.Add( new ActionResult { ActionId = _trackedOpportunityId, Status = status, Detail = "opportunity policy" } );
+		if ( status == ActionStatus.Deferred )
+		{
+			_opportunityPostponements++;
+		}
+		else
+		{
+			_trackedOpportunityId = "";
+			_trackedOpportunity = null;
+		}
 	}
 
 	public List<DecisionBatch> Run( int ticks )
@@ -174,6 +213,14 @@ public sealed class FakeHost
 		foreach ( var exec in _executions )
 			AdvanceExecution( exec );
 		_executions.RemoveAll( e => e == null );
+
+		// opportunity answers queued by TrackOpportunity arrive one tick later, like all acks
+		foreach ( var ack in _queuedOpportunityAcks )
+		{
+			ack.ResultTick = TickIndex;
+			_pendingAcks.Add( ack );
+		}
+		_queuedOpportunityAcks.Clear();
 
 		var monster = new MonsterSnapshot
 		{
