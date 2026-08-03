@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.0 - 2026-08-03
+
+- Fixed the unreachable default aggressive threshold: `AggressiveThresholdProgression` now defaults to 0.95 (the asymptotic fill never reaches 1.0, which previously stalled natural Normal→Aggressive transitions and kept monsters offstage forever).
+- Fixed the s&box adapter reporting `Frontstage` unconditionally; presence is now derived from the monster's actual region.
 - Added the deterministic macro core (`PressureDirector`): pressure gauge with the recovered fill formula, Normal/Aggressive modes, opportunity quotas and event quotas, cooldown/decrease timing, candidate latching with hysteresis, spatial exclusion rules, offstage sweep and ingress suggestion, script overrides, and full telemetry reason codes (60 unit tests).
 - Added the deterministic micro core (`MonsterAgent`): typed perception with current-vs-remembered evidence and linear confidence decay, motivation arbitration, and 14 ordered modules (lifecycle/nav-recovery, script override, damage-stun, retreat, threat response, ambush, attack, suspect response, hiding target, investigate, search, stalk, offstage, idle) with full action-acknowledgement handling (75 unit tests).
 - Added the AlienIsolationInspired compatibility preset: 12 verbatim decoded intensity configurations plus headliner profile and recovered micro tuning constants, isolated to the preset with confidence labels.

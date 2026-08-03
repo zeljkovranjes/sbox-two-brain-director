@@ -1,6 +1,6 @@
 # Two-Brain Director for s&box
 
-s&box package identity: `local.two_brain_director` (unpublished)
+Published s&box package: `notpointless.two_brain_director`
 
 A generalized, deterministic two-layer monster AI library inspired by the two-brains architecture of Alien: Isolation. It does not contain Creative Assembly code or assets. Its clean-room core consumes plain snapshots and emits declarative decisions, leaving entities, navigation, animation, combat, and game rules to your game.
 
@@ -8,7 +8,7 @@ Repository: https://github.com/zeljkovranjes/sbox-two-brain-director
 
 Documentation: [architecture](docs/ARCHITECTURE.md) · [API map](docs/API.md) · [tick order](docs/TICK_ORDER.md) · [configuration](docs/CONFIG_REFERENCE.md) · [evidence map](docs/EVIDENCE_MATRIX.md)
 
-Current release: **unreleased**. See the [changelog](CHANGELOG.md).
+Current release: **1.0.0**. See the [changelog](CHANGELOG.md).
 
 ## How it fits
 
