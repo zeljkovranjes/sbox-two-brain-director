@@ -61,6 +61,24 @@ public sealed class ScenarioTests
 		Assert.True( first.Macro.ExpiryTick > first.TickIndex );
 		Assert.True( IntegrationSupport.HasCode( new[] { first }, "opportunity_offered" ) );
 		Assert.True( IntegrationSupport.HasCode( new[] { first }, "candidate_latched" ) );
+
+		// Part C — natural transition under the DEFAULT threshold (0.95): the asymptotic
+		// fill crosses it at ~tick 179 at dt 1/20 (fill=3). The director must fire an
+		// aggressive opportunity on its own, without scripts or coarse dt.
+		var natural = IntegrationSupport.NewHost();
+		natural.AddTarget( "t1", new Vec3( 10.0, 0.0, 0.0 ), "hall" );
+		DecisionBatch transition = null;
+		for ( int i = 0; i < 260 && transition is null; i++ )
+		{
+			var b = natural.Step();
+			if ( b.Macro is not null && b.Macro.ReasonCode == "mode_aggressive_start" )
+				transition = b;
+		}
+		Assert.NotNull( transition );
+		Assert.InRange( transition.TickIndex, 100, 240 );
+		Assert.True( transition.Macro.Progression >= 0.949 );
+		Assert.Equal( PressureMode.Aggressive, transition.Macro.Mode );
+		Assert.Equal( "hall", transition.Macro.CandidateRegionId );
 	}
 
 	// 2 — SetPressureMode(aggressive) flips the mode with script telemetry + a decision.

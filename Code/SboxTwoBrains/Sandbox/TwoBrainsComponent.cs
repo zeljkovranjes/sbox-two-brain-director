@@ -221,7 +221,7 @@ public sealed class TwoBrainsComponent : Component
 				Position = SandboxVec.ToCore( monsterPos ),
 				RegionId = ResolveRegionId( monsterPos, null ),
 				Lifecycle = (Driver?.IsAlive ?? true) ? MonsterLifecycle.Alive : MonsterLifecycle.Dead,
-				Presence = StagePresence.Frontstage,
+				Presence = ResolvePresence( monsterPos ),
 				HealthFraction = _healthFraction,
 				CurrentTargetId = EmptyToNull( System.MicroState.CurrentTargetId ),
 				ActiveActionId = _activeMove?.ActionId,
@@ -398,6 +398,28 @@ public sealed class TwoBrainsComponent : Component
 			}
 		}
 		return best ?? "";
+	}
+
+	/// <summary>
+	/// Derives frontstage/offstage presence from the world: the monster counts as offstage
+	/// when its resolved region matches a <see cref="TwoBrainsOffstageRegion"/> marker's
+	/// RegionId.
+	/// </summary>
+	private StagePresence ResolvePresence( Vector3 position )
+	{
+		var regionId = ResolveRegionId( position, null );
+		if ( !string.IsNullOrEmpty( regionId ) )
+		{
+			foreach ( var region in Scene.GetAllComponents<TwoBrainsOffstageRegion>() )
+			{
+				if ( region is null || !region.IsValid )
+					continue;
+				var id = string.IsNullOrEmpty( region.RegionId ) ? region.GameObject?.Name : region.RegionId;
+				if ( string.Equals( id, regionId, StringComparison.Ordinal ) )
+					return StagePresence.Offstage;
+			}
+		}
+		return StagePresence.Frontstage;
 	}
 
 	/// <summary>

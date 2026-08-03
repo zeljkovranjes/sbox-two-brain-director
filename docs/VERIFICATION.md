@@ -27,7 +27,7 @@ How the library is verified, and how to re-run every check. Current status: **al
 
 ## Assumptions and remaining gaps
 
-- The gauge fill is asymptotic: with `AggressiveThresholdProgression = 1.0` and small dt it never quite reaches 1.0 (verified numerically). Use thresholds < 1.0 for natural transitions, or coarse dt; scripted/forced transitions are unaffected. Documented in docs/CONFIG_REFERENCE.md.
+- The gauge fill is asymptotic: `AggressiveThresholdProgression` must stay below 1.0 for natural transitions (the generic default is 0.95; verified by the CalmToPressureProgression Part C scenario). Setting exactly 1.0 stalls natural transitions forever at small dt — scripted/forced transitions are unaffected. Documented in docs/CONFIG_REFERENCE.md.
 - `SetPressureMode(Aggressive)` without `ResetGauge` discharges immediately (no sweep window armed); use `ForceOpportunity` for a sustained scripted encounter. Documented in docs/API.md.
 - `quota_blocked` re-emits each tick while the condition holds — filter in telemetry consumers.
 - NavCandidate `RouteDistance`/LOS from the s&box adapter are conservative (−1/false) unless the host supplies better; the core handles both.

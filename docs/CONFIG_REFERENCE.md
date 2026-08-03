@@ -32,7 +32,7 @@ Macro pacing: the gauge, mode transitions, quotas, sweeps, and exclusion margins
 | `MaxOpportunities` | count | 4 | [1, 100] | Completed opportunities before the quota blocks new cycles. |
 | `EventQuotaMin` | count | 0 | [0, 100] | Event-quota random target lower bound; 0 disables the quota. |
 | `EventQuotaMax` | count | 0 | [0, 100] | Event-quota random target upper bound (inclusive). Must be ≥ `EventQuotaMin`. |
-| `AggressiveThresholdProgression` | [0,1] | 1.0 | [0.0001, 1] | Progression at which Normal may switch to Aggressive. |
+| `AggressiveThresholdProgression` | [0,1] | 0.95 | [0.0001, 1] | Progression at which Normal may switch to Aggressive. Must be < 1 for natural transitions: the fill is asymptotic and never quite reaches 1.0. |
 | `StartProgression` | [0,1] | 0.0 | [0, 1] | Progression a fresh/reset cycle starts at. |
 | `SweepDurationSeconds` | s | 50.0 | [1, 600] | How long an offstage sweep opportunity stays active. |
 | `SweepMinDistance` | m | 10.0 | [0, 1000] | Minimum route distance for sweep staging. |

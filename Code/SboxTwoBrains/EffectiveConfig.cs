@@ -22,7 +22,7 @@ public sealed class EffectiveConfig
 		public int MaxOpportunities = 4;
 		public int EventQuotaMin = 0;
 		public int EventQuotaMax = 0;
-		public double AggressiveThresholdProgression = 1.0;
+		public double AggressiveThresholdProgression = 0.95; // < 1.0 required: the asymptotic fill never reaches 1.0
 		public double StartProgression = 0.0;
 		public double SweepDurationSeconds = 50.0;
 		public double SweepMinDistance = 10.0;
