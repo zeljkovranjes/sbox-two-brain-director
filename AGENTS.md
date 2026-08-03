@@ -21,7 +21,7 @@ Deterministic, engine-independent two-layer monster AI for s&box. Read `docs/PLA
 
 ## Workflow
 
-- Build/test: `dotnet test tests/TwoBrainsCore.Tests` (compiles the shared core sources).
+- Build/test: `dotnet test dev/SboxTwoBrains.Tests` (compiles the shared core sources).
 - Offline s&box compile check: `dotnet build dev/offline-check`.
 - Authoritative s&box compile: `powershell dev/editor-rig/run_editor_gate.ps1` (needs Steam).
 - Do not commit build artifacts. Do not copy files from `reference/` into the library —

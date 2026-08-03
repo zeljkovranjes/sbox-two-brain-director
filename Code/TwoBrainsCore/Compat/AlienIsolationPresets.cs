@@ -201,7 +201,7 @@ public static class AlienIsolationPresets
 		RoleTimeoutMax = 60, RoleTimeoutMin = 40, SweepBoxHalfWidth = 12, SweepBoxMinHalfLength = 10,
 	};
 
-	/// <summary>All 13 decoded records in stable order.</summary>
+	/// <summary>All 12 usable decoded records in stable order (the 13th shipped file is an empty master index).</summary>
 	public static AlienIsolationConfigRecord[] All() => new[]
 	{
 		Default, Mild, Moderate, ModeratelyIntense, Intense,

@@ -27,7 +27,7 @@ two-brain-director/
     TwoBrainsSbox/                 s&box adapter (Sandbox.* refs): components, world snapshot builder,
                                    action executor, debug overlay HUD, input toggle
     Examples/                      demo: fake-host-free scene setup, archetype configs, scripted demo
-  Editor/TwoBrainsGate.cs          editor compile-gate hook (adapted from humanoid-retargeter M0Gate)
+  Editor/CompileGate.cs               editor compile-gate hook (adapted from humanoid-retargeter M0Gate)
   Assets/scenes/                   demo scene(s)
   ProjectSettings/Input.config     debug overlay toggle action
   tests/TwoBrainsCore.Tests/       xUnit; globs ../../Code/TwoBrainsCore/**/*.cs (shared sources)

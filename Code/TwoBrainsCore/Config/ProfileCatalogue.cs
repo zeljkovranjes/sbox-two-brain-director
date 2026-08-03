@@ -64,6 +64,11 @@ public sealed class ProfileCatalogue
 		p.MaxOpportunities = Math.Max( p.MaxOpportunities, 1 );
 		p.ExclusionFirstMin = Math.Max( p.ExclusionFirstMin, 0 );
 		p.ExclusionFirstMax = Math.Max( p.ExclusionFirstMax, 0 );
+		p.ExclusionSubsequentMin = Math.Max( p.ExclusionSubsequentMin, 0 );
+		p.ExclusionSubsequentMax = Math.Max( p.ExclusionSubsequentMax, 0 );
+		// research: the derived spatial pair is clamped to at least 10
+		p.SweepMinDistance = Math.Max( p.SweepMinDistance, EffectiveConfig.ResolvedPressure.MinSpatialValue );
+		p.SweepMaxDistance = Math.Max( p.SweepMaxDistance, EffectiveConfig.ResolvedPressure.MinSpatialValue );
 		effective.ProfileName = baseName + "+" + modifierName;
 		return effective.Validated();
 	}
@@ -195,8 +200,16 @@ public sealed class ProfileCatalogue
 
 	private static void ApplyModules( EffectiveConfig.ResolvedModules r, ModulesSection s )
 	{
-		if ( s.Order != null ) r.Order = (string[])s.Order.Clone();
-		if ( s.Disabled != null ) r.Disabled = (string[])s.Disabled.Clone();
+		if ( s.Order != null ) r.Order = CopyStrings( s.Order );
+		if ( s.Disabled != null ) r.Disabled = CopyStrings( s.Disabled );
+	}
+
+	private static string[] CopyStrings( string[] source )
+	{
+		var copy = new string[source.Length];
+		for ( int i = 0; i < source.Length; i++ )
+			copy[i] = source[i];
+		return copy;
 	}
 
 	private static void ApplyMovement( EffectiveConfig.ResolvedMovement r, MovementSection s )
