@@ -40,6 +40,11 @@ Per channel (`Visual`, `Auditory`, `Touch`, `Damage`, `Light`, `GameDefined`):
 | `MaxAgeSeconds` | Hard memory horizon extends. | Records dropped sooner regardless of confidence. |
 | `Weight` | Channel dominates `WeightedSum` combination. | Channel discounted. |
 
+Decay is linear, not exponential: an unconfirmed memory loses
+`BaseConfidence / (2 × DecayHalfLifeSeconds)` per second, reaching zero in two
+half-lives. A recently confirmed memory at/above threshold also keeps its sense
+active for `RecentConfirmationSeconds` after the stimulus stops (the active latch).
+
 Global: `MemoryCapacity` bounds retained records (evicts under pressure),
 `RecentConfirmationSeconds` defines "fresh" evidence, `CombineMode` picks `Max`
 (one strong memory dominates) or `WeightedSum` (several weak ones can add up). A

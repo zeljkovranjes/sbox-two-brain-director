@@ -19,7 +19,8 @@ flowchart TD
   Host --> Exec[Movement, navigation, combat, animation]
   Exec --> Ack[ActionResult acknowledgements]
   Ack -->|next tick inside WorldSnapshot| Sys
-  Save[SavedStateEnvelope] <--> Sys
+  Sys -->|CaptureState| Save[SavedStateEnvelope]
+  Save -->|RestoreState| Sys
 ```
 
 ## The responsibility boundary
@@ -48,9 +49,9 @@ monster be menacing someone right now, and from which region?"
 ```mermaid
 stateDiagram-v2
   [*] --> Normal
-  Normal --> Aggressive: progression >= threshold\n+ candidate latched\n+ cooldown 0\n+ count < MaxOpportunities
-  Aggressive --> Normal: opportunity completed (count++)\nor rejected / expired
-  Normal --> Normal: gauge fills while latched\ndecreases while unlatched (after grace)
+  Normal --> Aggressive: threshold reached, candidate latched, cooldown 0, count under quota
+  Aggressive --> Normal: opportunity completed (count++) or rejected / expired
+  Normal --> Normal: gauge fills while latched, decreases while unlatched after grace
 ```
 
 - **Gauge.** While a candidate region is latched and the mode is Normal, progression
@@ -88,19 +89,27 @@ The micro is an ordered list of guarded modules over a perception-and-memory mod
 It answers "given what I sense and remember, what do I do this tick?"
 
 - **Perception.** Stimuli arrive on typed channels (Visual, Auditory, Touch, Damage,
-  Light, GameDefined) with a host confidence. A stimulus activates when confidence
-  meets the channel threshold; activation latches into memory.
-- **Memory.** Each `MemoryRecord` decays deterministically by its channel half-life
-  and is forgotten after `MaxAgeSeconds` or when capacity evicts it. Current evidence
+  Light, GameDefined) with a host confidence. A sense activates when a current
+  stimulus meets the channel threshold; the activation latches — a still-confident
+  memory confirmed within `RecentConfirmationSeconds` keeps the sense engaged
+  briefly.
+- **Memory.** Each `MemoryRecord` decays linearly while unconfirmed (losing
+  `BaseConfidence / (2 × half-life)` per second — no transcendental math) and is
+  dropped at zero confidence, past `MaxAgeSeconds`, or when `MemoryCapacity`
+  evicts it (lowest confidence, then oldest, then ordinal id). Current evidence
   (this tick) and remembered evidence stay separate views; same-subject memories
   combine by `Max` or clamped `WeightedSum` per profile. There is no omniscient
   target location unless the host sets `WorldSnapshot.OmniscientTargets`, which is
   always telemetry-visible.
-- **Motivations.** Named flags (e.g. attack, stalk, search) set by macro bias and
+- **Motivations.** Named flags (e.g. "attack", "stalk") set by macro bias and
   local conditions gate the modules below.
 
 Modules run in arbitration order; each returns Ineligible, Running, Succeeded,
-Failed, or an action request, and the first non-Ineligible module wins the tick:
+Failed, or an action request, and the first non-Ineligible module wins the tick.
+At most one new action is emitted per tick; while a previous action is still
+awaited, only a strictly higher-priority module may emit (preemption) — everything
+else yields an empty batch. The macro bias arrives episodically, so the agent
+latches the last `PressureDecision` until its expiry (`MicroState.LastMacro`):
 
 | # | Module | Role |
 |---|---|---|

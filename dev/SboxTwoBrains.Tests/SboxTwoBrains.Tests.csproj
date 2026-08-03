@@ -13,7 +13,7 @@
 
   <!-- Shared-source: compile the core library directly (single source of truth). -->
   <ItemGroup>
-    <Compile Include="..\..\Code\TwoBrainsCore\**\*.cs" />
+    <Compile Include="..\..\Code\SboxTwoBrains\**\*.cs" Exclude="..\..\Code\SboxTwoBrains\Sandbox\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

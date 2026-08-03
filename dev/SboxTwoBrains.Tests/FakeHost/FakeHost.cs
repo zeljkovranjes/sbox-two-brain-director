@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using TwoBrains.Core;
-using TwoBrains.Core.Contract;
+using SboxTwoBrains;
 
 namespace SboxTwoBrains.Tests.FakeHost;
 

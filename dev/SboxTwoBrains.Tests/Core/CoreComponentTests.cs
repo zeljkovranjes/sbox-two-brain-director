@@ -1,8 +1,4 @@
-using TwoBrains.Core.Compat;
-using TwoBrains.Core.Config;
-using TwoBrains.Core.Contract;
-using TwoBrains.Core.Determinism;
-using TwoBrains.Core.Serialization;
+using SboxTwoBrains;
 using Xunit;
 
 namespace SboxTwoBrains.Tests.Core;

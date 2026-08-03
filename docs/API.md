@@ -65,11 +65,16 @@ stateDiagram-v2
   `Interrupted`, `Failed`) may arrive per action id; `Deferred` may repeat first.
 - A terminal ack clears the pending entry. Rejections and failures set cooldowns and
   flags that steer next-tick selection (pathfinding-failure recovery included).
+- Deferral is bounded. A micro action gets one deferral extension by its original
+  interval; a second `Deferred` for the same id is processed as a failure. A macro
+  opportunity likewise gets a single extension by the original interval.
+- While an action is still awaited, at most one new action is emitted per tick and
+  only a strictly higher-priority module may emit it (preemption, telemetry
+  `preempt`); everything else yields an empty batch.
 - Unknown ids are ignored with telemetry (`ack_unknown`), never fatal.
 - **Opportunities reuse the same channel.** An ack whose `ActionId` equals the
   macro's pending opportunity id (`PressureDecision.OpportunityId`, format
-  `op{tick}-{count}`) is routed to the macro instead of the micro. For an
-  opportunity, `Deferred` buys a single extension by the original interval.
+  `op{tick}-{count}`) is routed to the macro instead of the micro.
 
 ## Contract — snapshots
 
@@ -534,8 +539,8 @@ this is the API surface only.
 | Type | Purpose |
 |---|---|
 | `ProfileCatalogue` | Named profile store. `Add(profile)` (fluent), `Contains(name)`, `Names()` (ordinal-sorted), `Resolve(name) → EffectiveConfig`, `ResolveWithModifier(baseName, modifierName) → EffectiveConfig`. Resolution is deterministic, root-first, child wins; cycles and missing parents throw `ConfigException`. |
-| `MonsterProfileConfig` | Inheritable profile: `Name`, `BasedOn`, `ConfigVersion`, and nullable sections `Pressure`, `Perception`, `Search`, `Threat`, `Combat`, `Offstage`, `Modules`, `Movement`. Null = inherit. |
-| `EffectiveConfig` | Fully resolved, validated configuration — the only shape policy reads. `Validate()` returns error lines, `Validated()` throws on any violation, `Describe()` gives sorted `key=value` lines, `ComputeHash()` a stable FNV-1a identity for save/replay. |
+| `MonsterProfileConfig` | Inheritable profile: `Name`, `BasedOn`, `ConfigVersion`, and nullable sections `Pressure`, `Perception`, `Search`, `Threat`, `Combat`, `Offstage`, `Modules`, `Movement` (types `PressureSection`, `PerceptionSection`, `SearchSection`, `ThreatSection`, `CombatSection`, `OffstageSection`, `ModulesSection`, `MovementSection`; per-channel `PerceptionChannelSection`). Null = inherit. |
+| `EffectiveConfig` | Fully resolved, validated configuration — the only shape policy reads. Values live on the nested `ResolvedPressure`/`ResolvedPerception`/`ResolvedPerceptionChannel`/`ResolvedSearch`/`ResolvedThreat`/`ResolvedCombat`/`ResolvedOffstage`/`ResolvedModules`/`ResolvedMovement` classes. `Validate()` returns error lines, `Validated()` throws on any violation, `Describe()` gives sorted `key=value` lines, `ComputeHash()` a stable FNV-1a identity for save/replay. |
 | `ConfigException` | Thrown on validation or inheritance-resolution failure. |
 
 ## Compat: the research preset

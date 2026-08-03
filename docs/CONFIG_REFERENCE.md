@@ -7,6 +7,15 @@ applies when no profile in the inheritance chain sets a field; they are clean-ro
 starting values, not research-derived data. Ranges are enforced at resolve time and a
 violation throws `ConfigException` listing every offending field.
 
+Authoring types: `PressureSection`, `PerceptionSection` (with
+`PerceptionChannelSection` per channel), `SearchSection`, `ThreatSection`,
+`CombatSection`, `OffstageSection`, `ModulesSection`, `MovementSection`. Their
+nullable fields mirror the tables below; the resolved runtime values live on the
+nested `EffectiveConfig.Resolved*` classes (`ResolvedPressure`,
+`ResolvedPerception`, `ResolvedPerceptionChannel`, `ResolvedSearch`,
+`ResolvedThreat`, `ResolvedCombat`, `ResolvedOffstage`, `ResolvedModules`,
+`ResolvedMovement`).
+
 Units: timers in **seconds**, distances in **metres**, fractions unitless in
 **[0,1]**, counts dimensionless.
 
@@ -139,6 +148,12 @@ Offstage staging, sweep, and ingress policy for the micro layer.
 |---|---|---|---|---|
 | `Order` | names | empty | module registry names | Arbitration order (earlier wins). Empty = built-in default order. |
 | `Disabled` | names | empty | module registry names | Modules force-disabled for this profile. |
+
+Registry names and built-in default order: `Lifecycle`, `ScriptOverride`,
+`DamageStun`, `Retreat`, `ThreatResponse`, `Ambush`, `Attack`, `SuspectResponse`,
+`HidingTarget`, `Investigate`, `Search`, `Stalk`, `Offstage`, `Idle`. A name in
+`Order` that matches no registered module is skipped with a `module_unknown`
+telemetry event.
 
 ## Movement
 
