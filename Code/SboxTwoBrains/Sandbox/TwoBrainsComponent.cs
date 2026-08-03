@@ -86,6 +86,40 @@ public sealed class TwoBrainsComponent : Component
 	public DecisionBatch LastBatch { get; private set; }
 
 	/// <summary>
+	/// One-line formatted macro+micro state for diagnostics (debug HUDs, MCP probes, logs).
+	/// Invariant-culture, compact: mode, progression, candidate, counts, active module,
+	/// motivations, target, nav failures, pending/awaiting actions, and the last telemetry codes.
+	/// </summary>
+	public string DebugStatusLine
+	{
+		get
+		{
+			if ( System is null )
+				return "system=none";
+
+			var m = System.MacroState;
+			var a = System.MicroState;
+			var motivations = a.Motivations.Count == 0 ? "-" : string.Join( ",", a.Motivations );
+			var lastCodes = "";
+			if ( LastBatch?.Telemetry is not null && LastBatch.Telemetry.Count > 0 )
+			{
+				var start = Math.Max( 0, LastBatch.Telemetry.Count - 3 );
+				var codes = new List<string>();
+				for ( var i = start; i < LastBatch.Telemetry.Count; i++ )
+					codes.Add( LastBatch.Telemetry[i].Code );
+				lastCodes = string.Join( ",", codes );
+			}
+			return string.Format(
+				System.Globalization.CultureInfo.InvariantCulture,
+				"mode={0} p={1:0.00} cand={2} count={3} quota={4}/{5} module={6} motiv={7} target={8} navfail={9} awaiting={10} pending={11} sweep={12:0.0} codes={13}",
+				m.Mode, m.Progression, m.ActiveCandidateId, m.CompletedOpportunities,
+				m.EventQuotaProgress, m.EventQuotaTarget,
+				a.ActiveModule, motivations, a.CurrentTargetId, a.ConsecutiveNavFailures,
+				a.AwaitingActionId, a.PendingActions.Count, m.SweepSecondsRemaining, lastCodes );
+		}
+	}
+
+	/// <summary>
 	/// The monster driver actions are dispatched to. Auto-wired in OnStart from a sibling
 	/// component implementing <see cref="IMonsterDriver"/>; assign manually to override.
 	/// </summary>
