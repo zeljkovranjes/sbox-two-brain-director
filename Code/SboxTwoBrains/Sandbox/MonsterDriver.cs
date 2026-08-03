@@ -147,14 +147,46 @@ public class MonsterDriverBase : Component, IMonsterDriver
 			return false;
 
 		CancelPendingMove();
+
+		// Land on the OPPOSITE side's linked nav node (guaranteed navmesh-adjacent).
+		// Crossing backstage→frontstage lands on the frontstage node and vice versa.
 		var dest = found.WorldPosition;
+		var offstageNode = FindNodePosition( found.OffstageNodeId );
+		var frontstageNode = FindNodePosition( found.FrontstageNodeId );
+		if ( offstageNode.HasValue && frontstageNode.HasValue )
+		{
+			dest = WorldPosition.Distance( offstageNode.Value ) >= WorldPosition.Distance( frontstageNode.Value )
+				? offstageNode.Value
+				: frontstageNode.Value;
+		}
+		else if ( offstageNode.HasValue )
+		{
+			dest = offstageNode.Value;
+		}
+
 		if ( _agent is not null && _agent.IsValid && _agent.Enabled )
 		{
 			_agent.Stop();
-			_agent.SetAgentPosition( dest );
+			try { _agent.SetAgentPosition( dest ); }
+			catch ( Exception ) { /* nav placement failed; the transform teleport below still lands */ }
 		}
 		WorldPosition = dest;
 		return true;
+	}
+
+	private Vector3? FindNodePosition( string nodeId )
+	{
+		if ( string.IsNullOrEmpty( nodeId ) )
+			return null;
+
+		foreach ( var node in Scene.GetAllComponents<TwoBrainsNavNode>() )
+		{
+			if ( node is null || !node.IsValid || node.GameObject is null )
+				continue;
+			if ( string.Equals( node.GameObject.Name, nodeId, StringComparison.Ordinal ) )
+				return node.WorldPosition;
+		}
+		return null;
 	}
 
 	/// <summary>Base implementation does nothing. Override to trigger your threat animation/sound.</summary>
