@@ -106,7 +106,10 @@ public sealed class TwoBrainsComponent : Component
 				var start = Math.Max( 0, LastBatch.Telemetry.Count - 3 );
 				var codes = new List<string>();
 				for ( var i = start; i < LastBatch.Telemetry.Count; i++ )
-					codes.Add( LastBatch.Telemetry[i].Code );
+				{
+					var ev = LastBatch.Telemetry[i];
+					codes.Add( string.IsNullOrEmpty( ev.Message ) ? ev.Code : ev.Code + ":" + ev.Message );
+				}
 				lastCodes = string.Join( ",", codes );
 			}
 			return string.Format(
