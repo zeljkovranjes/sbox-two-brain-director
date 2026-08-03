@@ -20,6 +20,7 @@ reference/
 # agent/tooling local files
 .claude/
 CLAUDE.md
+.mcp.json
 
 # editor-rig results / scratch
 dev/editor-rig/*_result.json
