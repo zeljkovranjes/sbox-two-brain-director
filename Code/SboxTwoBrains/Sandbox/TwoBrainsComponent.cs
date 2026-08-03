@@ -516,6 +516,7 @@ public sealed class TwoBrainsComponent : Component
 
 	private void DispatchAction( DecisionBatch batch, ActionRequest action )
 	{
+		Log.Info( "[twobrains] dispatch " + action.Kind + " " + action.ActionId + " reason=" + action.ReasonCode + " ingress=" + action.IngressId + " node=" + action.NodeId + " region=" + action.RegionId );
 		if ( IsMovementKind( action.Kind ) )
 		{
 			DispatchMovement( batch, action );

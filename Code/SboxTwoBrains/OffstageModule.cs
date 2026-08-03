@@ -56,10 +56,6 @@ internal sealed class OffstageModule : IAgentModule
 			if ( pick == null ) return ModuleResult.Ineligible();
 			if ( !ac.MayEmit ) return ModuleResult.Running();
 
-			// Remember the opportunity bringing us offstage; the entry gate uses it after
-			// the egress to prevent an immediate ping-pong on the same latched decision.
-			if ( macro.OpportunityId.Length > 0 )
-				s.OffstageBlockOpportunityId = macro.OpportunityId;
 			var draft = ac.Draft( ActionKind.UseIngress, ReasonCodes.IngressUse );
 			draft.IngressId = pick.IngressId;
 			draft.Destination = pick.Position;
@@ -72,6 +68,10 @@ internal sealed class OffstageModule : IAgentModule
 		{
 			s.Flags.Add( StateKeys.SweepActive );
 			s.Timers[StateKeys.Sweep] = ac.Cfg.Pressure.SweepDurationSeconds;
+			// Record the opportunity owning this sweep; after the egress the entry gate uses
+			// it to refuse an immediate ping-pong back offstage on the same latched decision.
+			if ( macro != null && macro.OpportunityId.Length > 0 )
+				s.OffstageBlockOpportunityId = macro.OpportunityId;
 		}
 		if ( !ac.TimerActive( StateKeys.Sweep ) )
 		{

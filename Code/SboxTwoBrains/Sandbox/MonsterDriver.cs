@@ -168,6 +168,8 @@ public class MonsterDriverBase : Component, IMonsterDriver
 			dest = offstageNode.Value;
 		}
 
+		Log.Info( "[twobrains] traverse " + ingressId + " from=" + WorldPosition + " offId='" + found.OffstageNodeId + "' frontId='" + found.FrontstageNodeId + "' off=" + offstageNode + " front=" + frontstageNode + " dest=" + dest );
+
 		if ( _agent is not null && _agent.IsValid && _agent.Enabled )
 		{
 			_agent.Stop();
