@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 1.0.1 - 2026-08-03
+
+- Fixed the offstage egress/re-entry ping-pong: the offstage flag now reconciles with actual host presence every tick instead of blindly toggling on ingress acknowledgements (monsters starting offstage were teleported back within a tick of every egress), and the offstage entry branch refuses to re-enter on the opportunity that owns the current sweep (recorded at sweep start).
+- Fixed moves wedged against sealed offstage boundaries: the driver fails stalled moves after 2.5 s without progress instead of blocking up to 30 s, and the move timeout default is now 15 s.
+- Fixed frontstage-bound modules (investigate, search, suspect response) chasing targets across sealed stage boundaries: they now yield while the monster is offstage so the Offstage module egresses first.
+- Added `DebugStatusLine` to the s&box adapter component: one-line macro/micro state (mode, progression, module, motivations, flags, ingress bans, block id, telemetry) for HUDs and live probes.
+- Added the `NoEgressReentryPingPong` regression scenario (181 tests total).
+
 ## 1.0.0 - 2026-08-03
 
 - Fixed the unreachable default aggressive threshold: `AggressiveThresholdProgression` now defaults to 0.95 (the asymptotic fill never reaches 1.0, which previously stalled natural Normal→Aggressive transitions and kept monsters offstage forever).
