@@ -3,9 +3,9 @@
 Deterministic, engine-independent two-layer monster AI for s&box. Read `docs/PLAN.md` and
 `docs/EVIDENCE_MATRIX.md` before changing anything.
 
-## Non-negotiable core rules (Code/TwoBrainsCore)
+## Non-negotiable core rules (Code/SboxTwoBrains, excluding Sandbox/)
 
-1. Pure C#, zero engine references. No `Sandbox.*`, no `Vector3` (use `TwoBrains.Core.Contract.Vec3`).
+1. Pure C#, zero engine references. No `Sandbox.*`, no engine `Vector3` (use `Vec3`).
 2. Explicit `using` directives in every file — implicit usings are DISABLED.
 3. Banned APIs (s&box SB500 whitelist): `[GeneratedRegex]`, `ZLibStream`, `Environment.NewLine`,
    `OverflowException`, `InvalidDataException`, `Type.IsPrimitive`, `Array.Clone()`.
@@ -17,7 +17,7 @@ Deterministic, engine-independent two-layer monster AI for s&box. Read `docs/PLA
 6. Game-specific names (menace/backstage/vent/AlienConfig templates) appear ONLY under
    `TwoBrains.Core.Compat` and preset docs.
 7. Every state transition emits a reason code into telemetry.
-8. Namespace root `TwoBrains.Core`; file-scoped namespaces; one public type per file.
+8. Namespace `SboxTwoBrains` for all core files (flat folder); `SboxTwoBrains.Sandbox` for engine files; file-scoped namespaces; one public type per file.
 
 ## Workflow
 

@@ -1,6 +1,6 @@
 # Getting started
 
-The core is engine-independent pure C# (`Code/TwoBrainsCore`). In an s&box project,
+The core is engine-independent pure C# (`Code/SboxTwoBrains`). In an s&box project,
 place this repository in your project's `Libraries/local.two_brain_director`
 directory; anywhere else, compile the sources directly into your host. The
 integration contract is always the same four steps per tick.
@@ -10,13 +10,13 @@ integration contract is always the same four steps per tick.
 Register named profiles, or start from the research-derived preset catalogue:
 
 ```csharp
-using TwoBrains.Core.Config;
+using SboxTwoBrains;
 
 var catalogue = new ProfileCatalogue()
     .Add( new MonsterProfileConfig { Name = "demo" } ); // all generic-baseline defaults
 
 // Or, for the Alien: Isolation-inspired preset set:
-// var catalogue = TwoBrains.Core.Compat.AlienIsolationPresets.CreateCatalogue();
+// var catalogue = SboxTwoBrains.AlienIsolationPresets.CreateCatalogue();
 ```
 
 Resolution and validation happen here, once — bad ranges, missing parents, and
@@ -25,7 +25,7 @@ inheritance cycles throw `ConfigException` at startup, not mid-game.
 ## 2. Construct the system
 
 ```csharp
-using TwoBrains.Core;
+using SboxTwoBrains;
 
 var system = new TwoBrainsSystem( catalogue, "demo", seed: 42UL );
 // Optional additive difficulty modifier (must also be in the catalogue):
@@ -57,9 +57,9 @@ Self-contained, pure core, no engine. One monster, one target walking away at
 ```csharp
 using System;
 using System.Collections.Generic;
-using TwoBrains.Core;
-using TwoBrains.Core.Config;
-using TwoBrains.Core.Contract;
+using SboxTwoBrains;
+using SboxTwoBrains;
+using SboxTwoBrains;
 
 // --- one-time setup ------------------------------------------------------
 var catalogue = new ProfileCatalogue().Add( new MonsterProfileConfig { Name = "demo" } );
@@ -131,7 +131,7 @@ results instead of always succeeding.
 ## 5. Save and restore
 
 ```csharp
-using TwoBrains.Core.Serialization;
+using SboxTwoBrains;
 
 SavedStateEnvelope save = system.CaptureState();
 string json = CanonicalJson.ToJson( save );          // persist anywhere
@@ -150,7 +150,7 @@ different profile or seed silently breaks the replay contract, so compare
 ## Next steps
 
 - `examples/` — runnable demo hosts and archetype configurations.
-- `Code/TwoBrainsSbox/` — the s&box adapter: components, a world-snapshot builder,
+- `Code/SboxTwoBrains/Sandbox/` — the s&box adapter: components, a world-snapshot builder,
   an action executor, and a debug overlay.
 - [TUNING.md](TUNING.md) — pacing and perception tuning per archetype.
 - [CONFIG_REFERENCE.md](CONFIG_REFERENCE.md) — every field, range, and default.

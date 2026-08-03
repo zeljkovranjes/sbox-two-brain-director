@@ -9,41 +9,37 @@ Status: approved working plan (auto mode). Source spec: user prompt + `reference
 cross-platform runtime with first-class testing (xUnit) and deterministic managed FP for + − * /;
 the same core sources compile both under `dotnet` (tests) and inside the s&box editor compiler.
 
-## 2. Repository layout
+## 2. Repository layout (actual, post-restructure)
 
 ```
 two-brain-director/
-  two-brain-director.sbproj        s&box game project (org local, ident two_brain_director)
-  two-brain-director.sln           dotnet solution (tests + offline check)
+  two-brain-director.sbproj        s&box library package (org notpointless, ident two_brain_director)
+  two-brain-director.slnx          dotnet solution (tests + offline check)
   Code/
-    TwoBrainsCore/                 THE LIBRARY — pure deterministic core, zero engine refs
-      Contract/                    host contract types (snapshots, actions, results, telemetry, state)
-      Config/                      profile config, inheritance, validation, effective values
-      Determinism/                 DeterministicRng (xorshift128+), SimClock, fixed math helpers
-      Macro/                       PressureDirector + gauge/mode/quota/sweep/exclusion/ingress
-      Micro/                       MonsterAgent + perception/memory + ordered modules
-      Serialization/               versioned SavedState envelope, canonical decision JSON
-      Compat/                      AlienIsolationInspired preset (ONLY place game names appear)
-    TwoBrainsSbox/                 s&box adapter (Sandbox.* refs): components, world snapshot builder,
-                                   action executor, debug overlay HUD, input toggle
-    Examples/                      demo: fake-host-free scene setup, archetype configs, scripted demo
-  Editor/CompileGate.cs               editor compile-gate hook (adapted from humanoid-retargeter M0Gate)
-  Assets/scenes/                   demo scene(s)
-  ProjectSettings/Input.config     debug overlay toggle action
-  tests/TwoBrainsCore.Tests/       xUnit; globs ../../Code/TwoBrainsCore/**/*.cs (shared sources)
+    SboxTwoBrains/                 THE LIBRARY — flat, one namespace `SboxTwoBrains`
+                                   (contract, config, determinism, macro, micro,
+                                   serialization, compat preset — pure, zero engine refs)
+      Sandbox/                     engine adapter namespace SboxTwoBrains.Sandbox:
+                                   components, snapshot builder, driver, debug overlay HUD
+  Editor/CompileGate.cs            editor compile-gate hook (adapted from humanoid-retargeter M0Gate)
+  examples/                        runnable example suite (console exe, shared-source core)
+  ProjectSettings/                 s&box project settings
   dev/
+    SboxTwoBrains.Tests/           xUnit (Core, Macro, Micro, Integration, FakeHost)
     editor-rig/                    run_editor_gate.ps1 (adapted), README
     offline-check/                 csproj: dotnet build of Code/** against Sandbox managed DLLs
+    run_all.ps1                    tests → library build → examples build → editor gate
   docs/                            EVIDENCE_MATRIX, PLAN, ARCHITECTURE, API, CONFIG_REFERENCE,
-                                   TICK_ORDER, REPLAY, ADAPTERS, TESTING, COMPAT_PRESET
+                                   GETTING_STARTED, TUNING, EVIDENCE, TICK_ORDER
   reference/aio-research/          research repo clone (GITIGNORED — not redistributed)
-  README.md  AGENTS.md  .gitignore
+  README.md  AGENTS.md  CHANGELOG.md  .gitignore  .gitattributes  .github/workflows/
 ```
 
-The core is **shared-source**: `tests` and `dev/offline-check` compile `Code/TwoBrainsCore/**`
-directly; s&box compiles it as part of the project. No package references, no duplication.
+The core is **shared-source**: `dev/SboxTwoBrains.Tests`, `examples` and `dev/offline-check`
+compile `Code/SboxTwoBrains/**` directly (tests/examples exclude `Sandbox/**`); s&box compiles
+it as part of the project. No package references, no duplication.
 
-## 3. Hard rules for `Code/TwoBrainsCore` (must survive the s&box in-engine compiler)
+## 3. Hard rules for `Code/SboxTwoBrains` core files (must survive the s&box in-engine compiler)
 
 From humanoid-retargeter's verified findings:
 
@@ -54,7 +50,7 @@ From humanoid-retargeter's verified findings:
 - `System.Text.Json`, `System.Numerics`, `System.Collections.Generic`, `System.Linq` are fine.
 - Determinism: `double` math only (+ − * / and `Math.Sqrt`; **no** transcendental functions),
   no wall clock, no `System.Random`, no static mutable state, no engine singletons.
-- Namespace root `TwoBrains.Core`; engine types (`Sandbox.*`, `Vector3`) never enter the core.
+- Namespace `SboxTwoBrains` (flat); engine types (`Sandbox.*`, `Vector3`) never enter the core.
   The core defines its own `Vec3` (3×double).
 
 ## 4. Determinism contract
