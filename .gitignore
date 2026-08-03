@@ -17,6 +17,10 @@ Editor/Properties/
 # research reference clone (not redistributed)
 reference/
 
+# agent/tooling local files
+.claude/
+CLAUDE.md
+
 # editor-rig results / scratch
 dev/editor-rig/*_result.json
 dev/editor-rig/*.arm
