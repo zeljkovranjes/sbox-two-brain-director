@@ -112,13 +112,23 @@ public sealed class TwoBrainsComponent : Component
 				}
 				lastCodes = string.Join( ",", codes );
 			}
+
+			var pending = new List<string>();
+			foreach ( var kv in a.PendingMeta )
+				pending.Add( kv.Value.Kind.ToString() );
+			var pendingKinds = pending.Count == 0 ? "-" : string.Join( "+", pending );
+			var flags = a.Flags.Count == 0 ? "-" : string.Join( ",", a.Flags );
+			double banA = a.Timers.TryGetValue( "ingress_ban_vent_a", out var ba ) ? ba : 0.0;
+			double banB = a.Timers.TryGetValue( "ingress_ban_vent_b", out var bb ) ? bb : 0.0;
+			double sweepT = a.Timers.TryGetValue( "sweep", out var sw ) ? sw : 0.0;
+
 			return string.Format(
 				global::System.Globalization.CultureInfo.InvariantCulture,
-				"mode={0} p={1:0.00} cand={2} count={3} quota={4}/{5} module={6} motiv={7} target={8} navfail={9} awaiting={10} pending={11} sweep={12:0.0} codes={13}",
+				"mode={0} p={1:0.00} cand={2} count={3} quota={4}/{5} module={6} motiv={7} target={8} navfail={9} awaiting={10} pending={11}[{12}] flags={13} sweepT={14:0.0} banA={15:0.0} banB={16:0.0} codes={17}",
 				m.Mode, m.Progression, m.ActiveCandidateId, m.CompletedOpportunities,
 				m.EventQuotaProgress, m.EventQuotaTarget,
 				a.ActiveModule, motivations, a.CurrentTargetId, a.ConsecutiveNavFailures,
-				a.AwaitingActionId, a.PendingActions.Count, m.SweepSecondsRemaining, lastCodes );
+				a.AwaitingActionId, a.PendingActions.Count, pendingKinds, flags, sweepT, banA, banB, lastCodes );
 		}
 	}
 
