@@ -70,7 +70,7 @@ if ($CopyLibrary) {
         if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir "$libDir" | Out-Null }
     }
     Write-Host "Syncing library via robocopy..."
-    robocopy "$repoRoot" "$libDir" /MIR /XD .git .claude dev docs research reference examples /XF *.user /NFL /NDL /NJH /NJS | Out-Null
+    robocopy "$repoRoot" "$libDir" /MIR /XD .git .claude dev docs tests research reference examples /XF *.user /NFL /NDL /NJH /NJS | Out-Null
     if ($LASTEXITCODE -ge 8) { Fail 2 "robocopy failed with code $LASTEXITCODE" }
 } else {
     if (-not (Test-Path $libDir)) {

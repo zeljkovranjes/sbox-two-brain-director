@@ -89,7 +89,7 @@ contains `tb-editor-rig`.
 
 ```mermaid
 flowchart LR
-  A[dotnet test dev/SboxTwoBrains.Tests] --> B[dotnet build Code + examples]
+  A[dotnet test tests/SboxTwoBrains.Tests] --> B[dotnet build Code + examples]
   B --> C[run_editor_gate.ps1]
   D[dotnet build dev/offline-check] -.fast inner loop.-> C
 ```

@@ -3,7 +3,7 @@
 This library is a clean-room behavioral implementation inspired by the two-brains
 architecture of Alien: Isolation. It contains no Creative Assembly code or assets.
 Everything research-derived comes from a private research repository
-(`reference/aio-research`, gitignored and never redistributed) used only to derive
+(`docs/research/aio-research`, gitignored and never redistributed) used only to derive
 constants and structure. The full claim-by-claim mapping — 26 rows, each with source,
 confidence label, and consuming component — is
 [EVIDENCE_MATRIX.md](EVIDENCE_MATRIX.md). This file is the short version.
@@ -19,7 +19,7 @@ confidence label, and consuming component — is
 
 Enforcement rules, everywhere: proven facts may shape the preset; inferred behavior
 stays configurable; game-specific names (menace, backstage, vent, AlienConfig
-template names) appear only under the compat classes (`SboxTwoBrains`) and in preset
+template names) appear only under the compat classes (`SboxTwoBrains.Core`) and in preset
 documentation.
 
 ## What is proven decoded data

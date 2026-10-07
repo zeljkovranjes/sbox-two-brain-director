@@ -1,19 +1,32 @@
 # Changelog
 
-## Unreleased
+## 2026-10-06
+### Breaking
+- Namespaces changed with the move to the workspace layout. Update your `using` lines:
+  `SboxTwoBrains` (all core types: `TwoBrainsSystem`, `WorldSnapshot`, `PressureDirector`, `MonsterAgent`,
+  `AlienIsolationPresets`, ...) is now `SboxTwoBrains.Core`.
+- `SboxTwoBrains.Host` is split by layer: `TwoBrainsComponent`, `IMonsterDriver`, `MonsterDriverBase`,
+  `TwoBrainsNavNode`, `TwoBrainsIngress`, `TwoBrainsOffstageRegion`, `TwoBrainsExclusionZone`,
+  `TwoBrainsTarget` and `TwoBrainsDebugHudSpawner` are now in `SboxTwoBrains.Components`;
+  `SandboxVec` is in `SboxTwoBrains.Engine`; `TwoBrainsDebugHud` is in `SboxTwoBrains.UI`.
+  Scenes and prefabs keep loading: every component carries `[Alias]` with its old `SboxTwoBrains.Host` name.
+- The editor compile gate moved from `SboxTwoBrains.EditorGate` to `SboxTwoBrains.EditorTools`.
+### Changed
+- Restructured into the workspace package layout: core in `Code/SboxTwoBrains/Core`, s&box adapter in
+  `Components/`, `Engine/` and `UI/`, one type per file. Behaviour is unchanged; all 181 tests and 15
+  examples pass as before.
+- Tests moved to `tests/SboxTwoBrains.Tests`, the examples to `dev/examples`, the research clone to
+  `docs/research`. The CI workflow and `dev/run_all.ps1` use the new paths.
+- README rewritten in the standard format; package summary, description and tags updated.
+### Removed
+- `AGENTS.md` (its rules now live in `CLAUDE.md`) and the one-off `dev/restructure.ps1`.
 
-## 1.0.1 - 2026-08-03
-
-- Fixed the offstage egress/re-entry ping-pong: the offstage flag now reconciles with actual host presence every tick instead of blindly toggling on ingress acknowledgements (monsters starting offstage were teleported back within a tick of every egress), and the offstage entry branch refuses to re-enter on the opportunity that owns the current sweep (recorded at sweep start).
-- Fixed moves wedged against sealed offstage boundaries: the driver fails stalled moves after 2.5 s without progress instead of blocking up to 30 s, and the move timeout default is now 15 s.
-- Fixed frontstage-bound modules (investigate, search, suspect response) chasing targets across sealed stage boundaries: they now yield while the monster is offstage so the Offstage module egresses first.
-- Added `DebugStatusLine` to the s&box adapter component: one-line macro/micro state (mode, progression, module, motivations, flags, ingress bans, block id, telemetry) for HUDs and live probes.
-- Added the `NoEgressReentryPingPong` regression scenario (181 tests total).
-
-## 1.0.0 - 2026-08-03
-
-- Fixed the unreachable default aggressive threshold: `AggressiveThresholdProgression` now defaults to 0.95 (the asymptotic fill never reaches 1.0, which previously stalled natural Normal→Aggressive transitions and kept monsters offstage forever).
-- Fixed the s&box adapter reporting `Frontstage` unconditionally; presence is now derived from the monster's actual region.
+## 2026-08-03
+### Added
+- Released 1.0.0 (published package `notpointless.two_brain_director`) and 1.0.1 the same day; entries
+  marked (1.0.1) shipped in 1.0.1, the rest in 1.0.0.
+- Added `DebugStatusLine` to the s&box adapter component: one-line macro/micro state (mode, progression, module, motivations, flags, ingress bans, block id, telemetry) for HUDs and live probes. (1.0.1)
+- Added the `NoEgressReentryPingPong` regression scenario (181 tests total). (1.0.1)
 - Added the deterministic macro core (`PressureDirector`): pressure gauge with the recovered fill formula, Normal/Aggressive modes, opportunity quotas and event quotas, cooldown/decrease timing, candidate latching with hysteresis, spatial exclusion rules, offstage sweep and ingress suggestion, script overrides, and full telemetry reason codes (60 unit tests).
 - Added the deterministic micro core (`MonsterAgent`): typed perception with current-vs-remembered evidence and linear confidence decay, motivation arbitration, and 14 ordered modules (lifecycle/nav-recovery, script override, damage-stun, retreat, threat response, ambush, attack, suspect response, hiding target, investigate, search, stalk, offstage, idle) with full action-acknowledgement handling (75 unit tests).
 - Added the AlienIsolationInspired compatibility preset: 12 verbatim decoded intensity configurations plus headliner profile and recovered micro tuning constants, isolated to the preset with confidence labels.
@@ -26,6 +39,12 @@
 - Added the seedable, fully serializable deterministic RNG and canonical JSON serializer used by the replay contract.
 - Added the `TwoBrainsSystem` facade implementing the explicit tick order: validate, acknowledgements, directives, macro update, micro update, deterministic conflict resolution, commit.
 - Added the full documentation set: architecture, API map, configuration reference, getting started, tuning, evidence map, tick order, and editor-rig guide.
+### Fixed
+- Fixed the offstage egress/re-entry ping-pong: the offstage flag now reconciles with actual host presence every tick instead of blindly toggling on ingress acknowledgements (monsters starting offstage were teleported back within a tick of every egress), and the offstage entry branch refuses to re-enter on the opportunity that owns the current sweep (recorded at sweep start). (1.0.1)
+- Fixed moves wedged against sealed offstage boundaries: the driver fails stalled moves after 2.5 s without progress instead of blocking up to 30 s, and the move timeout default is now 15 s. (1.0.1)
+- Fixed frontstage-bound modules (investigate, search, suspect response) chasing targets across sealed stage boundaries: they now yield while the monster is offstage so the Offstage module egresses first. (1.0.1)
+- Fixed the unreachable default aggressive threshold: `AggressiveThresholdProgression` now defaults to 0.95 (the asymptotic fill never reaches 1.0, which previously stalled natural Normal→Aggressive transitions and kept monsters offstage forever).
+- Fixed the s&box adapter reporting `Frontstage` unconditionally; presence is now derived from the monster's actual region.
 - Fixed the in-engine `Sandbox.Internal` resolution collision by namespacing the adapter as `SboxTwoBrains.Host` (found by the editor gate).
 - Fixed the SB500 whitelist violations: removed `UnsafeRelaxedJsonEscaping` and `Array.Clone` usage (found by the editor gate).
 - Fixed Vec3 JSON round-tripping via `[JsonConstructor]` and the FakeHost execution-enumeration bug.

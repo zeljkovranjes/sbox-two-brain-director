@@ -1,6 +1,6 @@
 # Evidence-to-Component Matrix
 
-Maps every claim in `reference/aio-research` to a component of this library, with the
+Maps every claim in `docs/research/aio-research` to a component of this library, with the
 research confidence label preserved. Rules enforced everywhere:
 
 - **Proven / High** → may define the `AlienIsolationInspired` compatibility preset defaults.

@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\Code\**\*.cs" Exclude="..\..\Code\obj*\**" />
-    <Compile Include="..\..\Editor\**\*.cs" />
+    <Compile Include="..\..\Editor\**\*.cs" Exclude="..\..\Editor\obj*\**" />
   </ItemGroup>
 
   <ItemGroup>
