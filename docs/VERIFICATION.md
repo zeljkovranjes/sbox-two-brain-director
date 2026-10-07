@@ -4,8 +4,8 @@ How the library is verified, and how to re-run every check. Current status: **al
 
 | Layer | Command | Result |
 |---|---|---|
-| Unit + integration tests | `dotnet test dev/SboxTwoBrains.Tests` | 180/180 pass |
-| Examples (runnable, self-checking) | `dotnet run --project examples/TwoBrains.Examples.csproj` | 15/15 pass |
+| Unit + integration tests | `dotnet test tests/SboxTwoBrains.Tests` | 180/180 pass |
+| Examples (runnable, self-checking) | `dotnet run --project dev/examples/TwoBrains.Examples.csproj` | 15/15 pass |
 | Offline s&box compile pre-check | `dotnet build dev/offline-check/OfflineCheck.csproj` | 0 errors, 0 warnings |
 | Real s&box editor compile gate | `powershell dev/editor-rig/run_editor_gate.ps1` | PASS (assembly `package.notpointless.two_brain_director`, core type `SboxTwoBrains.TwoBrainsSystem`, 0 compile errors, SB500 clean) |
 | One-shot everything | `powershell dev/run_all.ps1` | all of the above |

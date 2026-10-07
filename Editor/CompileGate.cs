@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 using Editor;
 using Sandbox;
 
-namespace SboxTwoBrains.EditorGate;
+namespace SboxTwoBrains.EditorTools;
 
 public static class CompileGate
 {

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>TwoBrains.Examples</AssemblyName>
+    <RootNamespace>TwoBrains.Examples</RootNamespace>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>14</LangVersion>
+    <IsPackable>false</IsPackable>
+    <!-- Isolated per-lane intermediate dirs (obj.*) used by parallel agents must never be compiled. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj*/**;bin*/**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <!-- Shared-source: compile the engine-free core directly (single source of truth);
+       the s&box adapter layers are left out — the examples are engine-free. -->
+  <ItemGroup>
+    <Compile Include="..\..\Code\SboxTwoBrains\Core\**\*.cs" Link="Core\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

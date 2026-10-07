@@ -1,7 +1,12 @@
 # Implementation Plan — Two-Brain Director
 
-Status: approved working plan (auto mode). Source spec: user prompt + `reference/aio-research/PROMPT.MD`
-+ `docs/EVIDENCE_MATRIX.md`. This file is the single source of truth for layout, naming, and rules.
+Status: approved working plan (auto mode). Source spec: user prompt + `docs/research/aio-research/PROMPT.MD`
++ `docs/EVIDENCE_MATRIX.md`.
+
+> Historical. On 2026-10-06 the package moved to the workspace layout: core in `Code/SboxTwoBrains/Core`
+> (`SboxTwoBrains.Core`), adapter in `Components/`, `Engine/`, `UI/`, tests in `tests/`, examples in
+> `dev/examples/`, research clone in `docs/research/`. Layout and naming now follow the package
+> `CLAUDE.md`; sections 2 and 3 below describe the original layout.
 
 ## 1. Language and runtime
 

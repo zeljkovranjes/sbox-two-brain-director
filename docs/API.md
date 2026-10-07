@@ -1,9 +1,11 @@
 # Public API map
 
-All core types live in the single flat namespace `SboxTwoBrains` (`Code/SboxTwoBrains/`):
+All core types live in the single flat namespace `SboxTwoBrains.Core` (`Code/SboxTwoBrains/Core/`):
 contract types, configuration, determinism, macro, micro, serialization, and the
-compatibility preset side by side. The engine adapter lives in `SboxTwoBrains.Host`
-(`Code/SboxTwoBrains/Sandbox/`).
+compatibility preset side by side. The s&box adapter is split by layer:
+`SboxTwoBrains.Components` (`TwoBrainsComponent`, `IMonsterDriver`, `MonsterDriverBase`, the scene
+markers, `TwoBrainsDebugHudSpawner`), `SboxTwoBrains.Engine` (`SandboxVec` unit conversion) and
+`SboxTwoBrains.UI` (`TwoBrainsDebugHud`).
 
 | Need | Type |
 |---|---|
@@ -408,7 +410,7 @@ inputs must produce byte-identical decisions.
 
 ## PressureDirector (advanced use without the facade)
 
-`SboxTwoBrains.PressureDirector` — the macro layer standalone. Hosts driving
+`SboxTwoBrains.Core.PressureDirector` — the macro layer standalone. Hosts driving
 it directly must reproduce the facade's call order: `ApplyOpportunityResults`, then
 `ApplyDirectives`, then `Tick`, once per tick, with timer aging inside `Tick`.
 
@@ -451,7 +453,7 @@ non-negative.
 
 ## MonsterAgent (advanced use without the facade)
 
-`SboxTwoBrains.MonsterAgent` — the micro layer standalone. Call order per
+`SboxTwoBrains.Core.MonsterAgent` — the micro layer standalone. Call order per
 tick: `ApplyActionResults`, then `ApplyDirectives`, then `Tick`.
 
 | Member | Signature | Meaning |
@@ -515,7 +517,7 @@ handling).
 
 ## DeterministicRng
 
-`SboxTwoBrains.DeterministicRng` — seedable, fully serializable
+`SboxTwoBrains.Core.DeterministicRng` — seedable, fully serializable
 xorshift128+ RNG. Two 64-bit words are the complete state. Never use `System.Random`
 in policy-adjacent code.
 
@@ -546,7 +548,7 @@ this is the API surface only.
 
 ## Compat: the research preset
 
-the compat classes (`SboxTwoBrains`) is the only namespace where game-specific names and recovered
+the compat classes (`SboxTwoBrains.Core`) is the only namespace where game-specific names and recovered
 constants appear. See [CONFIG_REFERENCE.md](CONFIG_REFERENCE.md#the-alienisolationinspired-preset)
 for values and [EVIDENCE.md](EVIDENCE.md) for confidence labels.
 

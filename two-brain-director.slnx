@@ -1,5 +1,5 @@
 <Solution>
-  <Folder Name="/dev/">
-    <Project Path="dev/SboxTwoBrains.Tests/SboxTwoBrains.Tests.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/SboxTwoBrains.Tests/SboxTwoBrains.Tests.csproj" />
   </Folder>
 </Solution>

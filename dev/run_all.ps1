@@ -9,9 +9,9 @@ function Run([string]$label, [scriptblock]$command) {
 }
 Push-Location $root
 try {
-    Run "Deterministic core suite" { dotnet test dev\SboxTwoBrains.Tests\SboxTwoBrains.Tests.csproj }
+    Run "Deterministic core suite" { dotnet test tests\SboxTwoBrains.Tests\SboxTwoBrains.Tests.csproj }
     Run "s&box library build" { dotnet build Code\two_brain_director.csproj --no-restore }
-    Run "Examples build" { dotnet build examples\TwoBrains.Examples.csproj --no-restore }
+    Run "Examples build" { dotnet build dev\examples\TwoBrains.Examples.csproj --no-restore }
     if (-not $SkipEditor) {
         $arguments = @("-ExecutionPolicy", "Bypass", "-File", "dev\editor-rig\run_editor_gate.ps1")
         if ($CleanEditor) { $arguments += "-Clean" }
